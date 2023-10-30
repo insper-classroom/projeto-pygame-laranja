@@ -9,6 +9,8 @@ def inicializa():
     pygame.display.set_caption('233 CELSIUS')
     fundos = {}
     personagens = {}
+    pygame.mixer.music.load('musica.mp3')
+    pygame.mixer.music.play(loops=-1)
     
     fundos[1] = pygame.image.load('img/1.png')
     fundos[2] = pygame.image.load('img/2.png')

@@ -24,10 +24,39 @@ class Jogo:
             'fonte': pygame.font.Font(pygame.font.get_default_font(), 20)
         }
 
-        self.fundos = {}
-        for i in range(1, 16):
-            img = pygame.image.load(f'img/{i}.png')
-            self.fundos[i] = pygame.transform.scale(img, (c.LARGURA, c.ALTURA))
+def inicializa():
+    pygame.init()
+    window = pygame.display.set_mode((1920, 1080))
+    pygame.display.set_caption('233 CELSIUS')
+    fundos = {}
+    personagens = {}
+    pygame.mixer.music.load('musica.mp3')
+    pygame.mixer.music.play(loops=-1)
+    
+    fundos[1] = pygame.image.load('img/1.png')
+    fundos[2] = pygame.image.load('img/2.png')
+    fundos[3] = pygame.image.load('img/3.png')
+    fundos[4] = pygame.image.load('img/4.png')
+    fundos[5] = pygame.image.load('img/5.png')
+    fundos[6] = pygame.image.load('img/6.png')
+    fundos[7] = pygame.image.load('img/7.png')
+    fundos[8] = pygame.image.load('img/8.png')
+    fundos[9] = pygame.image.load('img/9.png')
+    fundos[10] = pygame.image.load('img/10.png')
+    fundos[11] = pygame.image.load('img/11.png')
+    fundos[12] = pygame.image.load('img/12.png')
+    fundos[13] = pygame.image.load('img/13.png')
+    fundos[14] = pygame.image.load('img/14.png')
+    fundos[15] = pygame.image.load('img/15.png')
+    assets ={'valor' : 1, 'rotação': 0 }
+    assets['bruno'] = pygame.image.load('img/brunogrande.png')
+    assets['livro'] = pygame.image.load('img/livro.png')
+    state = {}
+    state['player_posicao'] = [850, 400]
+    state['player_velocidade'] = [0, 0]
+    state['livros'] = []
+    state['livrosvelocidade'] = [0, 0]
+    state['cima_baixo_esquerda_direita'] = 'nada'
 
         self.state = {
             'bruno_pos': [(c.LARGURA - c.BRUNO_LARGURA) / 2, (c.ALTURA - c.BRUNO_ALTURA) / 2],

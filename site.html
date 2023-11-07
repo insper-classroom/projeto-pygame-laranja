@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.google.com/specimen/Roboto">
     <title>233 Celsius</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
@@ -16,13 +17,16 @@
         }
 
         header {
-            background-color: #333;
+            background-color: #841411;
             color: #fff;
             padding: 20px;
             text-align: center;
             width: 100%;
             box-sizing: border-box;
             position: relative;
+        }
+        html {
+            scroll-behavior: smooth;
         }
 
         header h1 {
@@ -50,7 +54,7 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            max-width: 100px; /* Ajuste o tamanho conforme necessário */
+            max-width: 240px; /* Ajuste o tamanho conforme necessário */
         }
 
         main {
@@ -64,11 +68,26 @@
         }
 
         section h2 {
-            color: #333;
+            color: #000000;
+        }
+        .criador {
+            display: inline-block;
+            text-align: center;
+            margin-right: 20px;
         }
 
+        .icone {
+            width: 300px; 
+            height: 300px; 
+            border-radius: 25%;
+            float:left
+        }
+
+        figcaption {
+            float: right;
+        }
         footer {
-            background-color: #333;
+            background-color: #841411;
             color: #fff;
             text-align: center;
             padding: 10px 0;
@@ -82,13 +101,13 @@
 </head>
 <body>
     <header>
-        <img src="img/brunogrande.png" alt="Logo" class="logo">
+        <img src="img/logo.png" alt="Logo" class="logo">
         <h1>Bem-vindo ao Mundo de 233 Celsius</h1>
         <nav>
             <ul>
                 <li><a href="#historia">História do Jogo</a></li>
                 <li><a href="#como-jogar">Como Jogar</a></li>
-                <li><a href="#criadores">História dos Criadores</a></li>
+                <li><a href="#criadores">Criadores</a></li>
             </ul>
         </nav>
     </header>
@@ -96,22 +115,32 @@
     <main>
         <section id="historia">
             <h2>História do Jogo</h2>
-            <p>Em um futuro distópico, após a intensa bipolaridade da população brasileira um grupo político chamado os cinzentos ascendeu e deu um golpe de estado no Brasil, deixando toda população burra e alienada, queimando todo fruto de conhecimento da população. Bruno é um jovem rapaz que trabalha como bombeiro para os cinzentos e tem a missão de queimar todos os livros, porém, algo impactante acontece em sua vida e ele percebe o bem do conhecimento e se revolta contra os cinzentos.</p>
+            <p>Em um futuro distópico, após uma intensa bipolarização da população brasileira, um grupo político chamado de "Os Cinzentos" ascendeu e deu um golpe de estado no Brasil, deixando toda população burra e alienada, queimando todo fruto de conhecimento da população. Bruno é um jovem rapaz que trabalha como bombeiro para os cinzentos e tem a missão de queimar todos os livros, porém, algo impactante acontece em sua vida e ele percebe o bem do conhecimento e se revolta contra os cinzentos.</p>
         </section>
 
         <section id="como-jogar">
             <h2>Como Jogar</h2>
-            <p>como jogar</p>
+            <p>Para jogar use das setas(left, right, up e down) para a locomoção do persongem e clique direito para lançar os projéteis nos inimigos. Com o link do arquivo abaixo você consegue baixar e utilizar o jogo abrindo-o através do VS-Code usando a biblioteca python complementar pygame obtida no terminal através do "pip install pygame".</p>
+            <a href="caminho/para/o/seu/arquivo.zip" download>
+                <button>Baixar Arquivo ZIP</button>
+            </a>
         </section>
 
         <section id="criadores">
-            <h2>História dos Criadores</h2>
-            <p>criadores do jogo</p>
-        </section>
+            <h2>Criadores</h2>
+            <div class="criador">
+                <img src="img/dev1.jpg" alt="Dev1" class="icone">
+                <figcaption>Carlos Hernani</figcaption>
+            </div>
+            <div class="criador">
+                <img src="img/dev2.png" alt="Dev2" class="icone">
+                <figcaption>Pedro Olivieri</figcaption>
+            </div>
+        </section>        
     </main>
 
     <footer>
-        <p>&copy; 2023 Seu Nome</p>
+        <p>&copy; 2023 "233 Celsius"</p>
     </footer>
 </body>
 </html>

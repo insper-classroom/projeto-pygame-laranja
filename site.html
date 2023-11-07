@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.google.com/specimen/Roboto">
     <title>233 Celsius</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
@@ -23,6 +24,9 @@
             width: 100%;
             box-sizing: border-box;
             position: relative;
+        }
+        html {
+            scroll-behavior: smooth;
         }
 
         header h1 {
@@ -66,7 +70,22 @@
         section h2 {
             color: #000000;
         }
+        .criador {
+            display: inline-block;
+            text-align: center;
+            margin-right: 20px;
+        }
 
+        .icone {
+            width: 300px; 
+            height: 300px; 
+            border-radius: 25%;
+            float:left
+        }
+
+        figcaption {
+            float: right;
+        }
         footer {
             background-color: #841411;
             color: #fff;
@@ -88,7 +107,7 @@
             <ul>
                 <li><a href="#historia">História do Jogo</a></li>
                 <li><a href="#como-jogar">Como Jogar</a></li>
-                <li><a href="#criadores">História dos Criadores</a></li>
+                <li><a href="#criadores">Criadores</a></li>
             </ul>
         </nav>
     </header>
@@ -101,16 +120,23 @@
 
         <section id="como-jogar">
             <h2>Como Jogar</h2>
-            <p>A jogabilidade do jogo consiste no uso das setas(left, right, up e down) para a locomoção do persongem e espaço para lançar os projéteis nos inimigos. Com o link do arquivo abaixo você consegue baixar e utilizar o jogo abrindo-o através do VS-Code.</p>
+            <p>Para jogar use das setas(left, right, up e down) para a locomoção do persongem e clique direito para lançar os projéteis nos inimigos. Com o link do arquivo abaixo você consegue baixar e utilizar o jogo abrindo-o através do VS-Code usando a biblioteca python complementar pygame obtida no terminal através do "pip install pygame".</p>
             <a href="caminho/para/o/seu/arquivo.zip" download>
                 <button>Baixar Arquivo ZIP</button>
             </a>
         </section>
 
         <section id="criadores">
-            <h2>História dos Criadores</h2>
-            <p>criadores do jogo</p>
-        </section>
+            <h2>Criadores</h2>
+            <div class="criador">
+                <img src="img/dev1.jpg" alt="Dev1" class="icone">
+                <figcaption>Carlos Hernani</figcaption>
+            </div>
+            <div class="criador">
+                <img src="img/dev2.png" alt="Dev2" class="icone">
+                <figcaption>Pedro Olivieri</figcaption>
+            </div>
+        </section>        
     </main>
 
     <footer>

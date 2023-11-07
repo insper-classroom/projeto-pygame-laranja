@@ -1,0 +1,59 @@
+import pygame
+import random
+import math
+import constants as c
+
+
+def atualiza_estado(window, fundos, assets, state):
+    if assets['valor'] == c.TELA_JOGO:
+        bruno_rect = pygame.Rect(state['bruno_pos'][0], state['bruno_pos'][1], c.BRUNO_LARGURA, c.BRUNO_LARGURA)
+        for livro in state['livros']:
+            livro_rect = pygame.Rect(livro['pos'][0], livro['pos'][1], c.LIVRO_LARGURA, c.LIVRO_ALTURA)
+            if bruno_rect.colliderect(livro_rect):
+                state['vidas'] -= 1  
+                state['livros'].remove(livro)  
+
+        if state['vidas'] <= 0:
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+
+    if state['agua_atual'] > 0:
+
+        state['agua_atual'] -= c.AGUA_CONSUMO
+
+    if not state.get('espirra_agua') and state['agua_atual'] < state['agua_max']:
+        state['agua_atual'] += 0.5
+        if state['agua_atual'] > state['agua_max']:
+            state['agua_atual'] = state['agua_max']
+
+    return True
+
+def desenha(window, fundos, assets, state):
+
+    if assets['valor'] == c.TELA_JOGO:
+
+        mira_pos = pygame.mouse.get_pos()  
+        window.blit(assets['mira'], (mira_pos[0]-c.MIRA_LARGURA/2, mira_pos[1]-c.MIRA_ALTURA/2)) 
+
+        posicao_barra_agua = ((c.LARGURA - c.BARRA_AGUA_LARGURA) / 2, c.ALTURA - c.BARRA_AGUA_ALTURA - 3)
+        agua_atual = state['agua_atual'] / state['agua_max']
+        pygame.draw.rect(window, c.CINZA, (posicao_barra_agua[0], posicao_barra_agua[1], c.BARRA_AGUA_LARGURA, c.BARRA_AGUA_ALTURA))
+        pygame.draw.rect(window, c.AZUL, (posicao_barra_agua[0], posicao_barra_agua[1], c.BARRA_AGUA_LARGURA * agua_atual, c.BARRA_AGUA_ALTURA))
+
+
+        for i in range(state['vidas']):
+            window.blit(assets['coracao'], (10 + i * (c.CORACAO_LARGURA + 5), 10))
+
+
+        font = pygame.font.SysFont(None, 36)
+        text = font.render(f":{state['livros_atingidos']}", True, (c.BRANCO))
+        text_width = text.get_width()
+        window.blit(text, (c.LARGURA - text_width - 10, 10))
+
+        window.blit(assets['livro'], (c.LARGURA - c.LIVRO_LARGURA - text_width, 0))
+    
+    pygame.display.update()
+    
+    return window
+
+

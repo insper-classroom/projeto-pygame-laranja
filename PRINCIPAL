@@ -1,0 +1,209 @@
+import pygame
+import random
+import math
+import constants as c
+
+def inicializa():
+    pygame.init()
+    window = pygame.display.set_mode((c.LARGURA, c.ALTURA), vsync=True, flags=pygame.SCALED)
+    pygame.display.set_caption('233 CELSIUS')
+
+    fundos = {}
+
+    for i in range(1, 16):  
+        img = pygame.image.load(f'img/{i}.png')
+        fundos[i] = pygame.transform.scale(img, (c.LARGURA, c.ALTURA))
+    
+
+    assets = {'valor': 1, 'rotação': 0 }
+    assets['bruno'] = pygame.transform.scale(pygame.image.load('img/brunogrande.png'), (c.BRUNO_LARGURA, c.BRUNO_ALTURA))
+    assets['livro'] = pygame.transform.scale(pygame.image.load('img/livro.png'), (c.LIVRO_LARGURA, c.LIVRO_ALTURA))
+    assets['agua'] = pygame.transform.scale(pygame.image.load('img/agua.png'), (c.AGUA_LARGURA, c.AGUA_ALTURA))
+    assets['mangueira'] = pygame.transform.scale(pygame.image.load('img/mangueira.png'), (c.MANGUEIRA_LARGURA, c.MANGUEIRA_ALTURA))
+    assets['mira'] = pygame.transform.scale(pygame.image.load('img/mira.png'), (c.MIRA_LARGURA, c.MANGUEIRA_ALTURA))
+    assets['coracao'] = pygame.transform.scale(pygame.image.load('img/coracao.png'), (c.CORACAO_LARGURA, c.CORACAO_ALTURA)) 
+
+    state = {}
+    state['bruno_pos'] = [(c.LARGURA - c.BRUNO_LARGURA) / 2, (c.ALTURA - c.BRUNO_ALTURA) / 2]
+    state['livros'] = []
+    state['livro_vida'] = 100
+    state['livros_atingidos'] = 0  
+    state['cima_baixo_esquerda_direita'] = 'nada'
+    state['mangueira_posicao'] = [(c.LARGURA - c.MANGUEIRA_LARGURA) / 2, (c.ALTURA - c.MANGUEIRA_ALTURA) / 2]
+    state['agua'] = []
+    state['espirra_agua'] = False
+    state['agua_atual'] = 100  
+    state['agua_max'] = 100   
+    state['vidas'] = 5  
+
+    return window, fundos, assets, state
+
+def colisao_ponto_retangulo(ponto_x, ponto_y, rect_x, rect_y, rect_w, rect_h):
+    if (
+    rect_x <= ponto_x and 
+    ponto_x <= rect_x + rect_w and 
+    rect_y <= ponto_y and 
+    ponto_y <= rect_y + rect_h
+):
+        return True
+    else:
+        return False
+
+
+def atualiza_estado(window, fundos, assets, state):
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return False
+        
+        if assets['valor'] == c.TELA_JOGO:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                state['espirra_agua'] = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                state['espirra_agua'] = False
+        else:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                if colisao_ponto_retangulo(x, y, 0, 0, c.LARGURA, c.ALTURA):
+                    assets['valor'] += 1
+
+    if assets['valor'] == c.TELA_JOGO:
+        bruno_rect = pygame.Rect(state['bruno_pos'][0], state['bruno_pos'][1], c.BRUNO_LARGURA, c.BRUNO_LARGURA)
+        for livro in state['livros']:
+            livro_rect = pygame.Rect(livro['pos'][0], livro['pos'][1], c.LIVRO_LARGURA, c.LIVRO_ALTURA)
+            if bruno_rect.colliderect(livro_rect):
+                state['vidas'] -= 1  
+                state['livros'].remove(livro) 
+
+        if state['vidas'] <= 0:
+            pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+        if random.random() < c.LIVRO_CHANCE_GERACAO: 
+            x, y = random.choice([(0, random.randint(0, c.ALTURA)), (c.LARGURA, random.randint(0, c.ALTURA)), (random.randint(0, c.LARGURA), 0), (random.randint(0, c.LARGURA), c.ALTURA)])
+            dx, dy = state['bruno_pos'][0] - x, state['bruno_pos'][1] - y
+            mag = math.sqrt(dx**2 + dy**2)
+            dx /= mag
+            dy /= mag
+            state['livros'].append({'pos': [x, y], 'vel': [dx * c.LIVRO_VEL, dy * c.LIVRO_VEL], 'vida': state['livro_vida']})
+
+        for livro in state['livros']:
+            livro['pos'][0] += livro['vel'][0]
+            livro['pos'][1] += livro['vel'][1]
+
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    centro_x, centro_y = (state['bruno_pos'][0] + c.BRUNO_LARGURA / 2, 
+                          state['bruno_pos'][1] + c.BRUNO_ALTURA / 2)
+    rel_x, rel_y = mouse_x - centro_x, mouse_y - centro_y
+    angulo = (180 / math.pi) * -math.atan2(rel_y, rel_x)
+    assets['rotação'] = angulo
+
+    state['mangueira_posicao'][0] = centro_x + c.DISTANCIA_CENTRO_MANGUEIRA * math.cos(math.radians(-angulo)) - c.MANGUEIRA_LARGURA/2
+    state['mangueira_posicao'][1] = centro_y + c.DISTANCIA_CENTRO_MANGUEIRA * math.sin(math.radians(-angulo)) - c.MANGUEIRA_ALTURA/2
+
+    if state.get('espirra_agua') and state['agua_atual'] > 0:
+        mouse_pos = pygame.mouse.get_pos()
+
+        mangueira_ponta = (
+            state['mangueira_posicao'][0] + c.MANGUEIRA_LARGURA / 2,
+            state['mangueira_posicao'][1] + c.MANGUEIRA_ALTURA / 2
+        )
+
+        diff_x = mouse_pos[0] - mangueira_ponta[0]
+        diff_y = mouse_pos[1] - mangueira_ponta[1]
+        angulo = -math.degrees(math.atan2(diff_y, diff_x))
+
+        assets['rotação'] = angulo
+        
+        state['agua'].append({
+            'posicao': list(mangueira_ponta),
+            'angulo': angulo
+        })
+
+        state['agua_atual'] -= c.AGUA_CONSUMO
+
+    if not state.get('espirra_agua') and state['agua_atual'] < state['agua_max']:
+        state['agua_atual'] += 0.5
+        if state['agua_atual'] > state['agua_max']:
+            state['agua_atual'] = state['agua_max']
+
+
+    for part in state['agua']:
+        part['posicao'][0] += c.AGUA_VEL * math.cos(math.radians(-part['angulo']))
+        part['posicao'][1] += c.AGUA_VEL * math.sin(math.radians(-part['angulo']))
+
+        agua_rect = pygame.Rect(part['posicao'][0], part['posicao'][1], c.AGUA_LARGURA, c.AGUA_ALTURA)
+        livros_a_remover = []  
+        aguas_a_remover = []  
+        for i, livro in enumerate(state['livros']):
+            livro_rect = pygame.Rect(livro['pos'][0], livro['pos'][1], c.LIVRO_LARGURA, c.LIVRO_ALTURA)
+            if agua_rect.colliderect(livro_rect):  
+                livro['vida'] -= c.LIVRO_DANO  
+                aguas_a_remover.append(part)  
+                if livro['vida'] <= 0:  
+                    state['livros_atingidos'] += 1  
+                    livros_a_remover.append(i)  
+
+        for i in reversed(livros_a_remover):  
+            del state['livros'][i]
+
+        for agua in aguas_a_remover:
+            state['agua'].remove(agua)
+
+    return True
+
+def desenha(window, fundos, assets, state):
+    window.fill((0, 0, 0))
+    window.blit(fundos[assets['valor']], (0,0))
+
+    for part in state['agua']:
+        window.blit(assets['agua'], part['posicao'])
+
+    if assets['valor'] == c.TELA_JOGO:
+        window.blit(assets['bruno'], state['bruno_pos'])
+
+        mangueira = assets['mangueira']
+        mangueira_girada = pygame.transform.rotate(mangueira, assets['rotação'])
+
+        offset_x = state['mangueira_posicao'][0] - (mangueira_girada.get_width() - c.MANGUEIRA_LARGURA) / 2
+        offset_y = state['mangueira_posicao'][1] - (mangueira_girada.get_height() - c.MANGUEIRA_ALTURA) / 2
+        window.blit(mangueira_girada, (offset_x, offset_y))
+
+        mira_pos = pygame.mouse.get_pos()  
+        window.blit(assets['mira'], (mira_pos[0]-c.MIRA_LARGURA/2, mira_pos[1]-c.MIRA_ALTURA/2))  
+
+        posicao_barra_agua = ((c.LARGURA - c.BARRA_AGUA_LARGURA) / 2, c.ALTURA - c.BARRA_AGUA_ALTURA - 3)
+        agua_atual = state['agua_atual'] / state['agua_max']
+        pygame.draw.rect(window, c.CINZA, (posicao_barra_agua[0], posicao_barra_agua[1], c.BARRA_AGUA_LARGURA, c.BARRA_AGUA_ALTURA))
+        pygame.draw.rect(window, c.AZUL, (posicao_barra_agua[0], posicao_barra_agua[1], c.BARRA_AGUA_LARGURA * agua_atual, c.BARRA_AGUA_ALTURA))
+
+        for livro in state['livros']:
+            window.blit(assets['livro'], livro['pos'])
+
+            posicao_barra_vida = (livro['pos'][0], livro['pos'][1] - 10) 
+            vida_atual = livro['vida'] / state['livro_vida']
+            pygame.draw.rect(window, c.VERMELHO, (posicao_barra_vida[0], posicao_barra_vida[1], c.BARRA_VIDA_LARGURA, c.BARRA_VIDA_ALTURA))
+            pygame.draw.rect(window, c.VERDE, (posicao_barra_vida[0], posicao_barra_vida[1], c.BARRA_VIDA_LARGURA * vida_atual, c.BARRA_VIDA_ALTURA))
+
+        for i in range(state['vidas']):
+            window.blit(assets['coracao'], (10 + i * (c.CORACAO_LARGURA + 5), 10))
+
+
+        font = pygame.font.SysFont(None, 36)
+        text = font.render(f":{state['livros_atingidos']}", True, (c.BRANCO))
+        text_width = text.get_width()
+        window.blit(text, (c.LARGURA - text_width - 10, 10))
+
+        window.blit(assets['livro'], (c.LARGURA - c.LIVRO_LARGURA - text_width, 0))
+    
+    pygame.display.update()
+    
+    return window
+
+def game_loop(window, fundos, assets, state):
+    while atualiza_estado(window, fundos, assets, state):
+        desenha(window, fundos, assets, state)
+
+if __name__ == '__main__':
+    w, f, a, s = inicializa()
+    game_loop(w, f, a, s)
+

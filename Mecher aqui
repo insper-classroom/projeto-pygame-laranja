@@ -1,5 +1,5 @@
 import pygame
-import constants as c
+import constants as c 
 import math
 import random
 
@@ -95,6 +95,45 @@ class TelaInicial(TelaBase):
         self.jogo.window.blit(fundo, (0, 0))
         pygame.display.update()
 
+class TelaGameOver(TelaBase):
+    def executa(self):
+        self.desenha()
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                return False
+            if evento.type == pygame.KEYDOWN and evento.key == pygame.K_RETURN:
+                self.jogo.muda_tela(TelaJogo(self.jogo))
+        return True
+
+    def desenha(self):
+        font = pygame.font.SysFont(None, 36)
+        self.jogo.window.fill((0, 0, 0))
+        texto_1 = font.render("Game Over!", True, (255, 0, 0))
+        texto_2 = font.render("ENTER para recomeçar", True, (255, 0, 0))
+        pos_texto1 = texto_1.get_rect(center=(c.LARGURA/2, (c.ALTURA/2) - 10))
+        pos_texto2 = texto_2.get_rect(center=(c.LARGURA/2, (c.ALTURA/2) + 10))
+        self.jogo.window.blit(texto_1, pos_texto1.topleft)
+        self.jogo.window.blit(texto_2, pos_texto2.topleft)
+        pygame.display.update()
+
+
+class GameState:
+    def __init__(self, jogo):
+        self.jogo = jogo
+
+    def atualiza_estado(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            
+            if self.jogo.assets['valor'] == c.TELA_JOGO:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.jogo.state['espirra_agua'] = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    self.jogo.state['espirra_agua'] = False
+                
+        return True
+
 class TelaJogo(TelaBase):
     def __init__(self, jogo):
         super().__init__(jogo)
@@ -104,13 +143,16 @@ class TelaJogo(TelaBase):
         self.barra_vida = BarraVida(jogo)
         self.agua = Agua(jogo)
         self.bruno = self.jogo.assets['bruno']
+        self.game_state = GameState(jogo)
+        self.barra_agua = BarraAgua(jogo)
+        self.coracao = Coracao(jogo)
+        self.mira = self.jogo.assets['mira']
 
     def executa(self):
+        if not self.game_state.atualiza_estado():
+            return False
         self.atualiza()
         self.desenha()
-        for evento in pygame.event.get():
-            if evento.type == pygame.QUIT:
-                return False 
         return True
     
     def atualiza(self):
@@ -118,6 +160,8 @@ class TelaJogo(TelaBase):
         self.livro.atualiza()
         self.barra_vida.atualiza()
         self.agua.atualiza()
+        self.barra_agua.atualiza()
+        self.coracao.atualiza()
 
     def desenha(self):
         self.jogo.window.fill((0, 0, 0))
@@ -127,6 +171,17 @@ class TelaJogo(TelaBase):
         self.livro.desenha()
         self.barra_vida.desenha()
         self.agua.desenha()
+        self.barra_agua.desenha()
+        self.coracao.desenha()
+
+        mira_pos = pygame.mouse.get_pos()
+        self.jogo.window.blit(self.mira, (mira_pos[0]-c.MIRA_LARGURA/2, mira_pos[1]-c.MIRA_ALTURA/2))
+
+        font = pygame.font.SysFont(None, 36)
+        text = font.render(f":{self.jogo.state['livros_atingidos']}", True, (c.BRANCO))
+        text_width = text.get_width()
+        self.jogo.window.blit(text, (c.LARGURA - text_width - 10, 10))
+        self.jogo.window.blit(self.jogo.assets['livro'], (c.LARGURA - c.LIVRO_LARGURA - text_width, 0))
 
         pygame.display.update()
 
@@ -199,18 +254,19 @@ class BarraVida(pygame.sprite.Sprite):
     def atualiza(self):
         for part in self.agua:
             agua_rect = pygame.Rect(part['posicao'][0], part['posicao'][1], c.AGUA_LARGURA, c.AGUA_ALTURA)
-            livros_a_remover = []  
+            livros_a_remover = [] 
             aguas_a_remover = []  
             for i, livro in enumerate(self.livro):
                 livro_rect = pygame.Rect(livro['pos'][0], livro['pos'][1], c.LIVRO_LARGURA, c.LIVRO_ALTURA)
-                if agua_rect.colliderect(livro_rect):  
+                if agua_rect.colliderect(livro_rect): 
                     livro['vida'] -= c.LIVRO_DANO  
-                    aguas_a_remover.append(part)  
-                    if livro['vida'] <= 0: 
-                        self.livros_atingidos += 1 
+                    aguas_a_remover.append(part) 
+                    if livro['vida'] <= 0:  
+                        self.livros_atingidos += 1  
+                        self.jogo.state['livros_atingidos'] = self.livros_atingidos
                         livros_a_remover.append(i)  
 
-            for i in reversed(livros_a_remover):  
+            for i in reversed(livros_a_remover): 
                 del self.livro[i]
 
             for agua in aguas_a_remover:
@@ -219,10 +275,105 @@ class BarraVida(pygame.sprite.Sprite):
 
     def desenha(self):
         for livro in self.livro:
-            posicao_barra_vida = (livro['pos'][0], livro['pos'][1] - 10) 
+            posicao_barra_vida = (livro['pos'][0], livro['pos'][1] - 10)  
             vida_atual = livro['vida'] / self.livro_vida_total
             pygame.draw.rect(self.jogo.window, c.VERMELHO, (posicao_barra_vida[0], posicao_barra_vida[1], c.BARRA_VIDA_LARGURA, c.BARRA_VIDA_ALTURA))
             pygame.draw.rect(self.jogo.window, c.VERDE, (posicao_barra_vida[0], posicao_barra_vida[1], c.BARRA_VIDA_LARGURA * vida_atual, c.BARRA_VIDA_ALTURA))
+
+class Agua(pygame.sprite.Sprite):
+    def __init__(self, jogo):
+        super().__init__()
+        self.jogo = jogo
+        self.espirra_agua = self.jogo.state['espirra_agua']
+        self.agua_atual = self.jogo.state['agua_atual']
+        self.mangueira_pos = self.jogo.state['mangueira_posicao']
+        self.angulo =  self.jogo.assets['rotacao']
+        self.agua = self.jogo.state['agua']
+        self.image = self.jogo.assets['agua']
+
+    def atualiza(self):
+        if self.jogo.state.get('espirra_agua') and self.agua_atual > 0:
+            mouse_pos = pygame.mouse.get_pos()
+
+            mangueira_ponta = (
+                self.mangueira_pos[0] + c.MANGUEIRA_LARGURA / 2,
+                self.mangueira_pos[1] + c.MANGUEIRA_ALTURA / 2
+            )
+
+            diff_x = mouse_pos[0] - mangueira_ponta[0]
+            diff_y = mouse_pos[1] - mangueira_ponta[1]
+            angulo = -math.degrees(math.atan2(diff_y, diff_x))
+
+            self.angulo = angulo
+        
+            self.agua_atual -= c.AGUA_CONSUMO
+            self.jogo.state['agua_atual'] = self.agua_atual
+            
+            if self.agua_atual > 0:  
+                self.agua.append({
+                    'posicao': list(mangueira_ponta),
+                    'angulo': angulo
+                })
+            else:
+                self.jogo.state['espirra_agua'] = False 
+
+
+        for part in self.agua:
+            part['posicao'][0] += c.AGUA_VEL * math.cos(math.radians(-part['angulo']))
+            part['posicao'][1] += c.AGUA_VEL * math.sin(math.radians(-part['angulo']))
+
+    def desenha(self):
+        for part in self.agua:
+            self.jogo.window.blit(self.image, part['posicao'])
+
+class BarraAgua(pygame.sprite.Sprite):
+    def __init__(self, jogo):
+        super().__init__()
+        self.jogo = jogo
+        self.agua_atual = self.jogo.state['agua_atual']
+        self.agua_max = self.jogo.state['agua_max']
+    
+    def atualiza(self):
+
+        if self.agua_atual <= 0:
+            self.jogo.state['espirra_agua'] = False
+
+        if self.jogo.state.get('espirra_agua') and self.agua_atual > 0:
+            self.agua_atual -= c.AGUA_CONSUMO
+            self.jogo.state['agua_atual'] = self.agua_atual
+
+
+        if not self.jogo.state.get('espirra_agua') and self.agua_atual < self.agua_max:
+            self.agua_atual += 0.5
+            if self.agua_atual > self.agua_max:
+                self.agua_atual = self.agua_max
+        
+            self.jogo.state['agua_atual'] = self.agua_atual
+
+    def desenha(self):
+        posicao_barra_agua = ((c.LARGURA - c.BARRA_AGUA_LARGURA) / 2, c.ALTURA - c.BARRA_AGUA_ALTURA - 3)
+        agua_atual = self.agua_atual / self.agua_max
+        pygame.draw.rect(self.jogo.window, c.CINZA, (posicao_barra_agua[0], posicao_barra_agua[1], c.BARRA_AGUA_LARGURA, c.BARRA_AGUA_ALTURA))
+        pygame.draw.rect(self.jogo.window, c.AZUL, (posicao_barra_agua[0], posicao_barra_agua[1], c.BARRA_AGUA_LARGURA * agua_atual, c.BARRA_AGUA_ALTURA))
+
+class Coracao(pygame.sprite.Sprite):
+    def __init__(self, jogo):
+        super().__init__()
+        self.jogo = jogo
+
+    def atualiza(self):
+        bruno_rect = pygame.Rect(self.jogo.state['bruno_pos'][0], self.jogo.state['bruno_pos'][1], c.BRUNO_LARGURA, c.BRUNO_LARGURA)
+        for livro in self.jogo.state['livros']:
+            livro_rect = pygame.Rect(livro['pos'][0], livro['pos'][1], c.LIVRO_LARGURA, c.LIVRO_ALTURA)
+            if bruno_rect.colliderect(livro_rect):
+                self.jogo.state['vidas'] -= 1 
+                self.jogo.state['livros'].remove(livro) 
+        if self.jogo.state['vidas'] <= 0:
+                self.jogo.muda_tela(TelaGameOver(self.jogo))
+
+    def desenha(self):
+        for i in range(self.jogo.state['vidas']):
+            self.jogo.window.blit(self.jogo.assets['coracao'], (10 + i * (c.CORACAO_LARGURA + 5), 10))
     
 if __name__ == '__main__':
     jogo = Jogo()

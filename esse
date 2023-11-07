@@ -1,0 +1,12 @@
+def desenha(window, fundos, assets, state):
+
+    font = pygame.font.SysFont(None, 36)
+    text = font.render(f":{state['livros_atingidos']}", True, (c.BRANCO))
+    text_width = text.get_width()
+    window.blit(text, (c.LARGURA - text_width - 10, 10))
+
+    window.blit(assets['livro'], (c.LARGURA - c.LIVRO_LARGURA - text_width, 0))
+    
+    pygame.display.update()
+    
+    return window

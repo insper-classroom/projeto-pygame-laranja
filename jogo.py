@@ -36,7 +36,7 @@ class Jogo:
 
     def carregar_fundos(self):    
         fundos = {}
-        for i in range(1, 20):
+        for i in range(1, 21):
             img = pygame.image.load(f'img/{i}.png')
             fundos[i] = pygame.transform.scale(img, (c.LARGURA, c.ALTURA))
         return fundos

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>233 Celsius</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #841411;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            max-width: 240px; /* Ajuste o tamanho conforme necessário */
+        }
+
+        main {
+            width: 70%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        section {
+            padding: 40px 0;
+        }
+
+        section h2 {
+            color: #000000;
+        }
+        .criador {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .icone {
+            width: 200px; 
+            height: 200px; 
+            border-radius: 25%;
+            float: left;
+        }
+        .redes-sociais img {
+            width: 20px; 
+            height: 20px; 
+            margin: 5px;
+}
+        .antes-depois {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .antes,
+        .depois {
+            text-align: center;
+        }
+
+        .antes img,
+        .depois img {
+            max-width: 80%;
+            height: auto;
+            margin-top: 10px;
+        }
+
+
+        figcaption {
+            float: right;
+        }
+        footer {
+            background-color: #841411;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo" class="logo">
+        <h1>Bem-vindo ao Mundo de 233 Celsius</h1>
+        <nav>
+            <ul>
+                <li><a href="#historia">História do Jogo</a></li>
+                <li><a href="#como-jogar">Como Jogar</a></li>
+                <li><a href="#logs">Logs</a></li>
+                <li><a href="#heuristica">Heurística</a></li>
+                <li><a href="#criadores">Criadores</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="historia">
+            <h2>História do Jogo</h2>
+            <p>Em um futuro distópico, após uma intensa bipolarização da população brasileira, um grupo político chamado de "Os Cinzentos" ascendeu e deu um golpe de estado no Brasil, deixando toda população burra e alienada, queimando todo fruto de conhecimento da população. Bruno é um jovem rapaz que trabalha como bombeiro para os cinzentos e tem a missão de queimar todos os livros, porém, algo impactante acontece em sua vida e ele percebe o bem do conhecimento e se revolta contra os cinzentos.</p>
+            <img src="historia.gif" alt="Gif" style="max-width: 80%; height: auto;">
+        </section>
+
+        <section id="como-jogar">
+            <h2>Como Jogar</h2>
+            <p>Para jogar use o mouse para se moviventar e o clique direito para lançar os projéteis nos inimigos. Com o link do arquivo abaixo você consegue baixar e utilizar o jogo abrindo-o através do VS-Code, utilize a biblioteca pygame complementar ao python 3 obtida no terminal através do "pip install pygame".</p>
+            <a href="caminho/para/o/seu/arquivo.zip" download>
+                <button>Baixar Arquivo ZIP</button>
+            </a>
+        </section>
+        <section id="logs">
+            <h2>Logs</h2>
+            <p>23/10/2023-add deadline(BOT)</p>
+            <p>24/10/2023-CRIANDO A JANELA DO JOGO(CARLOS)</p>
+            <p>24/10/2023-constantes(PEDRO)</p>
+            <p>27/10/2023-HISTÓRIA DO JOGO(CARLOS)</p>
+            <p>28/10/2023-inicio da criação do site(CARLOS)</p>
+            <p>30/10/2023-construção tela jogo(CARLOS)</p>
+            <p>30/10/2023-colocando música(CARLOS)</p>
+            <p>31/10/2023-mudanças no site(CARLOS)</p>
+            <p>31/10/2023-Movimentação jogador, mangueira e agua.(PEDRO)</p>
+            <p>01/11/2023-teste(PEDRO)</p>
+            <p>07/11/2023-mudanças no site(CARLOS)</p>
+            <p>07/11/2023-Commit(PEDRO)</p>
+            <p>07/11/2023-Merge remote-tracking branch 'refs/remotes/origin/main'(PEDRO)-correção dos problemas nos commits</p>
+            <p>07/11/2023-gif historia do jogo(CARLOS)</p>
+            <p>07/11/2023-organização site, redes sociais dos criadores(CARLOS)</p>
+            <p>08/11/2023-LOGS(CARLOS)</p>
+            </a>
+        </section>
+        <section id="heuristica">
+            <h2>Problema de heurística</h2>
+            <p>Falta de acesso as redes sociais dos criadores:</p>
+            <div class="antes-depois">
+                <div class="antes">
+                    <h3>Antes</h3>
+                    <img src="antes.png" alt="Antes">
+                </div>
+                <div class="depois">
+                    <h3>Depois</h3>
+                    <img src="depois.png" alt="Depois">
+                </div>
+                <p>Antes o usuario não possuia acesso a nenhuma informação dos criadores, após as alterações ele consegue.</p>
+            </div>
+        </section>
+        
+        <section id="criadores">
+            <h2>Criadores</h2>
+            <div class="criador">
+                <img src="dev1.jpg" alt="Dev1" class="icone">
+                <figcaption>Carlos Hernani</figcaption>
+                <div class="redes-sociais">
+                    <a href="https://www.linkedin.com/in/carlos-hernani-cardoso-3a9476297?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"><img src="linkedin_icon.png" alt="LinkedIn"></a>
+                    <a href="https://github.com/carloshernani-CH"><img src="github_icon.png" alt="Github"></a>
+                    <a href="https://www.instagram.com/_carloshernani""><img src="instagram_icon.png" alt="Instagram"></a>
+                </div>
+            </div>
+            <div class="criador">
+                <img src="dev2.png" alt="Dev2" class="icone">
+                <figcaption>Pedro Olivieri</figcaption>
+                <div class="redes-sociais">
+                    <a href="https://www.linkedin.com/in/pedroolivieri/"><img src="linkedin_icon.png" alt="LinkedIn"></a>
+                    <a href="https://github.com/pedrao05"><img src="github_icon.png" alt="Github"></a>
+                    <a href="https://www.instagram.com/pedro.olivieri7""><img src="instagram_icon.png" alt="Instagram"></a>
+                </div>
+            </div>
+        </section>
+            
+    </main>
+
+    <footer>
+        <p>&copy; 2023 "233 Celsius"</p>
+    </footer>
+</body>
+</html>

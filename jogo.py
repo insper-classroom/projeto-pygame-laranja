@@ -28,7 +28,9 @@ class Jogo:
             'coracao': pygame.transform.scale(pygame.image.load('img/coracao.png'), (c.CORACAO_LARGURA, c.CORACAO_ALTURA)),
             'valor': 1, 
             'rotacao': 0,
-            'fonte': pygame.font.Font(pygame.font.get_default_font(), 20)
+            'fonte': pygame.font.Font(pygame.font.get_default_font(), 20),
+            'som': pygame.mixer.music.load('musica.mp3'),
+            'play': pygame.mixer.music.play(loops=-1)
         }
 
         return assets
